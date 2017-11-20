@@ -8,7 +8,6 @@
 ## 20/11/2017
 ##
 
-
 MODULE		=	pam_test.so
 
 SRCS		=	src/test.c
@@ -22,11 +21,14 @@ GCC		=	gcc
 
 RM		=	rm -f
 
+LIB_PAM		=	-lpam
+LIB_PAM_MISC	=	-lpam_misc
+
 
 all		:	$(MODULE)
 
 $(MODULE)	:	$(OBJS)
-			$(GCC) -shared -o $(MODULE) $(OBJS)
+			$(GCC) -shared -o $(MODULE) $(OBJS) $(LIB_PAM) $(LIB_PAM_MISC)
 
 clean		:
 			$(RM) $(OBJS)
