@@ -5,7 +5,7 @@
 ** Login   <anthony.jouvel@epitech.eu>
 **
 ** Started on  Mon Nov 20 16:43:30 2017 Jouvel Anthony
-** Last update Mon Nov 20 17:18:46 2017 Jouvel Anthony
+** Last update Mon Nov 20 18:14:17 2017 Jouvel Anthony
 */
 
 #include "pamela.h"
@@ -17,11 +17,11 @@ int			main()
 
   pamc.conv = &misc_conv;
   pamc.appdata_ptr = NULL;
-  pam_start ("su", getenv ("USER"), &pamc, &pamh);
-  if (pam_authenticate (pamh, 0) != PAM_SUCCESS)
-    fprintf (stderr, "Échec de l'authentification !\n");
+  pam_start("su", getenv ("USER"), &pamc, &pamh);
+  if (pam_authenticate(pamh, 0) != PAM_SUCCESS)
+    fprintf(stderr, "Échec de l'authentification !\n");
   else
-    fprintf (stderr, "Authentification OK.\n");
-  pam_end (pamh, 0);
+    fprintf(stderr, "Authentification OK.\n");
+  pam_end(pamh, 0);
   return 0;
 }

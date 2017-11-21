@@ -10,7 +10,7 @@
 
 MODULE		=	pam_test.so
 
-SRCS		=	src/test.c
+SRCS		=	src/main.c
 
 OBJS		=	$(SRCS:.c=.o)
 
