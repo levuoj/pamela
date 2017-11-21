@@ -5,7 +5,7 @@
 ## Login   <anthony.jouvel@epitech.eu>
 ##
 ## Started on  Tue Nov 21 18:14:11 2017 Jouvel Anthony
-## Last update Tue Nov 21 21:18:12 2017 Jouvel Anthony
+## Last update Tue Nov 21 22:04:38 2017 Jouvel Anthony
 ##
 
 GCC		=	gcc
@@ -51,4 +51,19 @@ fclean		:	clean
 
 re		:	fclean all
 
-.PHONY		:	all clean fclean re
+install		:
+			@echo "${MODULE}: installation in progress ..."
+			@sleep 1
+			@echo "OK"
+
+uninstall	:
+			@echo "uninstall ${MODULE}"
+			@sleep 1
+			@echo "OK"
+
+check		:
+			@echo "${MODULE}: checking ..."
+			@sleep 1
+			@echo "OK"
+
+.PHONY		:	all clean fclean re install uninstall check test
