@@ -5,7 +5,7 @@
 ## Login   <anthony.jouvel@epitech.eu>
 ##
 ## Started on  Tue Nov 21 18:14:11 2017 Jouvel Anthony
-## Last update Tue Nov 21 18:24:29 2017 Jouvel Anthony
+## Last update Tue Nov 21 18:47:51 2017 Jouvel Anthony
 ##
 
 GCC		=	gcc
@@ -18,6 +18,12 @@ _SRCS		=	account/account.c
 
 _SRCS		+=	auth/pam_sm_authenticate.c \
 			auth/pam_sm_setcred.c
+
+_SRCS		+=	converse/converse.c
+
+_SRCS		+=	password/password.c
+
+_SRCS		+=	session/session.c
 
 SRCS		=	$(addprefix src/, $(_SRCS))
 
