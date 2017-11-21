@@ -1,25 +1,32 @@
 ##
-## Makefile
+## Makefile for  in /home/levuoj/rendu/pamela
 ##
+## Made by Jouvel Anthony
+## Login   <anthony.jouvel@epitech.eu>
 ##
-## Made by Pashervz
+## Started on  Tue Nov 21 18:14:11 2017 Jouvel Anthony
+## Last update Tue Nov 21 18:24:29 2017 Jouvel Anthony
 ##
-##
-## 20/11/2017
-##
-
-MODULE		=	pam_test.so
-
-SRCS		=	src/main.c
-
-OBJS		=	$(SRCS:.c=.o)
-
-CFLAGS		+=	-W -Wall -Wextra -fPIC
-CFLAGS		+=	-I include/
 
 GCC		=	gcc
 
 RM		=	rm -f
+
+MODULE		=	pam_test.so
+
+_SRCS		=	account/account.c
+
+_SRCS		+=	auth/pam_sm_authenticate.c \
+			auth/pam_sm_setcred.c
+
+SRCS		=	$(addprefix src/, $(_SRCS))
+
+OBJS		=	$(SRCS:.c=.o)
+
+#CFLAGS		+=	-W -Wall -Wextra
+CFLAGS		+=	-fPIC
+CFLAGS		+=	-g
+CFLAGS		+=	-I include/
 
 LIB_PAM		=	-lpam
 LIB_PAM_MISC	=	-lpam_misc

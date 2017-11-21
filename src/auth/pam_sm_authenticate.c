@@ -5,11 +5,17 @@
 ** Login   <anthony.jouvel@epitech.eu>
 **
 ** Started on  Tue Nov 21 11:01:46 2017 pamela
-** Last update Tue Nov 21 11:31:17 2017 pamela
+** Last update Tue Nov 21 18:25:31 2017 Jouvel Anthony
 */
 
 #include <security/pam_ext.h>
 #include <sys/wait.h>
-#include "auhthenticate.h"
+#include "authenticate.h"
 
-static int
+PAM_EXTERN int		pam_sm_authenticate(pam_handle_t *pamh,
+					    int flags,
+					    int argc,
+					    const char **argv)
+{
+  return (PAM_IGNORE);
+}
