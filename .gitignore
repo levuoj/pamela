@@ -2,3 +2,5 @@
 #*#
 pam_test.so
 *.o
+vgcore.*
+a.out
