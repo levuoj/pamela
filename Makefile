@@ -5,7 +5,7 @@
 ## Login   <anthony.jouvel@epitech.eu>
 ##
 ## Started on  Tue Nov 21 18:14:11 2017 Jouvel Anthony
-## Last update Tue Nov 21 18:47:51 2017 Jouvel Anthony
+## Last update Tue Nov 21 21:18:12 2017 Jouvel Anthony
 ##
 
 GCC		=	gcc
@@ -29,7 +29,7 @@ SRCS		=	$(addprefix src/, $(_SRCS))
 
 OBJS		=	$(SRCS:.c=.o)
 
-#CFLAGS		+=	-W -Wall -Wextra
+CFLAGS		+=	-W -Wall -Wextra
 CFLAGS		+=	-fPIC
 CFLAGS		+=	-g
 CFLAGS		+=	-I include/
