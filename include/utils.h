@@ -20,4 +20,4 @@
 
 int		execute_command(const char *);
 
-#endif UTILS_H_
+#endif /* UTILS_H_ */

@@ -25,6 +25,8 @@ _SRCS		+=	password/password.c
 
 _SRCS		+=	session/session.c
 
+_SRCS		+=	utils/utils.c
+
 SRCS		=	$(addprefix src/, $(_SRCS))
 
 OBJS		=	$(SRCS:.c=.o)
