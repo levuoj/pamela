@@ -8,9 +8,49 @@
 ** Last update Wed Nov 22 08:22:01 2017 pamela
 */
 
+#define _GNU_SOURCE
+#include <stdio.h>
 #include "password.h"
 #include "utils.h"
 #include "unused.h"
+
+
+static	int	create_passphrase()
+{
+  char		*command = NULL;
+
+  if (asprintf(&command, "head -c 4000 < /dev/urandom > ~/.pass") == -1)
+    return (-1);
+  if (execute_command(command) == -1)
+    return (-1);
+  free(command);
+  return (0);
+}
+
+static int	encrypt_passphrase(const char *password)
+{
+  char		*command = NULL;
+
+  if (asprintf(&command,
+	       "echo %s |openssl aes-256-cbc -a -salt -in ~/.pass -out ~/.pass.enc -pass stdin",
+	       password) == -1)
+    return (-1);
+  remove("~/.pass");
+  free(command);
+  return (0);
+}
+
+static int	decrypt_passphrase(const char *password)
+{
+  char		*command = NULL;
+  
+  if (asprintf(&command,
+	       "echo %s |openssl aes-256-cbc -d -a -in ~/.pass.enc -out ~/.pass -pass stdin",
+	       password) == -1)
+    return (-1);
+  free(command);
+  return (0);
+}
 
 int		pam_sm_chauthtok(pam_handle_t *pamh,
 				 int flags,
@@ -34,7 +74,14 @@ int		pam_sm_chauthtok(pam_handle_t *pamh,
     {
       return (ret_value);
     }
-  printf("old password = %s\n", (char*)old_password);
-  printf("new password = %s\n", (char*)new_password);
+  if (access("~/.pass", F_OK) == -1)
+    {
+      if (create_passphrase() == -1)
+	return (PAM_AUTHTOK_ERR);
+      if (decrypt_passphrase(old_password) == -1)
+	return (PAM_AUTHTOK_ERR);
+      if (encrypt_passphrase(new_password) == -1)
+	return (PAM_AUTHTOK_ERR);
+    }
   return (PAM_SUCCESS);
 }
