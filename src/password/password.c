@@ -15,7 +15,7 @@
 #include "unused.h"
 
 
-static	int	create_passphrase()
+int		create_passphrase()
 {
   char		*command = NULL;
 
@@ -27,7 +27,7 @@ static	int	create_passphrase()
   return (0);
 }
 
-static int	encrypt_passphrase(const char *password)
+int		encrypt_passphrase(const char *password)
 {
   char		*command = NULL;
 
@@ -40,7 +40,7 @@ static int	encrypt_passphrase(const char *password)
   return (0);
 }
 
-static int	decrypt_passphrase(const char *password)
+int		decrypt_passphrase(const char *password)
 {
   char		*command = NULL;
   
