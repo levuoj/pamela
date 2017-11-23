@@ -10,13 +10,13 @@ int			execute_command(const char *command)
     return (-1);
   if (pid != 0)
     {
-      if (wait(&status) == -1)
+      if (waitpid(pid, &status, 0) == -1)
 	return (-1);
     }
   else
     {
-      execlp("/bin/sh", "/bin/sh", "-c", command, NULL);
-      return (0);
+      if (execlp("/bin/sh", "/bin/sh", "-c", command, NULL) == -1)
+	exit(1);
     }
   return (0);
 }
