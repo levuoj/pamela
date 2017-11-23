@@ -21,7 +21,7 @@ int		create_passphrase(const char *login)
   char		*path = NULL;
 
   if (asprintf(&path, "/home/%s/.pass", login) == -1)
-    return (PAM_SESSION_ERR);
+    return (-1);
   if (asprintf(&command, "head -c 4000 < /dev/urandom > %s", path) == -1)
     return (-1);
   if (execute_command(command) == -1)
@@ -36,14 +36,16 @@ int		encrypt_passphrase(const char *password, const char *login)
   char		*path = NULL;
 
   if (asprintf(&path, "/home/%s", login) == -1)
-    return (PAM_SESSION_ERR);
+    return (-1);
   if (asprintf(&command,
 	       "echo %s |openssl aes-256-cbc -a -salt -in %s/.pass -out %s/.pass.enc -pass stdin",
 	       password, path, path) == -1)
     return (-1);
+  if (execute_command(command) == -1)
+    return (-1);
   free(path);
   if (asprintf(&path, "/home/%s/.pass", login) == -1)
-    return (PAM_SESSION_ERR);  
+    return (-1);  
   remove(path);
   free(command);
   free(path);
@@ -56,10 +58,12 @@ int		decrypt_passphrase(const char *password, const char *login)
   char		*path = NULL;
 
   if (asprintf(&path, "/home/%s", login) == -1)
-    return (PAM_SESSION_ERR);
+    return (-1);
   if (asprintf(&command,
 	       "echo %s |openssl aes-256-cbc -d -a -in %s/.pass.enc -out %s/.pass -pass stdin",
 	       password, path, path) == -1)
+    return (-1);
+  if (execute_command(command) == -1)
     return (-1);
   free(command);
   return (0);
