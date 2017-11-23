@@ -21,9 +21,9 @@
 #include <security/pam_appl.h>
 #include <security/pam_modules.h>
 
-int		decrypt_passphrase(const char *password);
-int		encrypt_passphrase(const char *password);
-int		create_passphrase();
+int		decrypt_passphrase(const char *password, const char *login);
+int		encrypt_passphrase(const char *password, const char *login);
+int		create_passphrase(const char *login);
 
   
 #endif /* !PASSWORD_H_ */

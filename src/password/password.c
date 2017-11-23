@@ -15,11 +15,14 @@
 #include "unused.h"
 
 
-int		create_passphrase()
+int		create_passphrase(const char *login)
 {
   char		*command = NULL;
+  char		*path = NULL;
 
-  if (asprintf(&command, "head -c 4000 < /dev/urandom > ~/.pass") == -1)
+  if (asprintf(&path, "/home/%s/.pass", login) == -1)
+    return (PAM_SESSION_ERR);
+  if (asprintf(&command, "head -c 4000 < /dev/urandom > %s", path) == -1)
     return (-1);
   if (execute_command(command) == -1)
     return (-1);
@@ -27,26 +30,36 @@ int		create_passphrase()
   return (0);
 }
 
-int		encrypt_passphrase(const char *password)
+int		encrypt_passphrase(const char *password, const char *login)
 {
   char		*command = NULL;
+  char		*path = NULL;
 
+  if (asprintf(&path, "/home/%s", login) == -1)
+    return (PAM_SESSION_ERR);
   if (asprintf(&command,
-	       "echo %s |openssl aes-256-cbc -a -salt -in ~/.pass -out ~/.pass.enc -pass stdin",
-	       password) == -1)
+	       "echo %s |openssl aes-256-cbc -a -salt -in %s/.pass -out %s/.pass.enc -pass stdin",
+	       password, path, path) == -1)
     return (-1);
-  remove("~/.pass");
+  free(path);
+  if (asprintf(&path, "/home/%s/.pass", login) == -1)
+    return (PAM_SESSION_ERR);  
+  remove(path);
   free(command);
+  free(path);
   return (0);
 }
 
-int		decrypt_passphrase(const char *password)
+int		decrypt_passphrase(const char *password, const char *login)
 {
   char		*command = NULL;
+  char		*path = NULL;
 
+  if (asprintf(&path, "/home/%s", login) == -1)
+    return (PAM_SESSION_ERR);
   if (asprintf(&command,
-	       "echo %s |openssl aes-256-cbc -d -a -in ~/.pass.enc -out ~/.pass -pass stdin",
-	       password) == -1)
+	       "echo %s |openssl aes-256-cbc -d -a -in %s/.pass.enc -out %s/.pass -pass stdin",
+	       password, path, path) == -1)
     return (-1);
   free(command);
   return (0);
@@ -63,6 +76,7 @@ int		pam_sm_chauthtok(pam_handle_t *pamh,
   const void	*old_password = NULL;
   const void	*new_password = NULL;
   const void	*login = NULL;
+  char		*path = NULL;
   int		ret_value;
 
   if ((ret_value = pam_get_item(pamh, PAM_AUTHTOK, &new_password)) != PAM_SUCCESS ||
@@ -74,14 +88,17 @@ int		pam_sm_chauthtok(pam_handle_t *pamh,
   if ((ret_value = pam_get_item(pamh, PAM_USER, &login)) != PAM_SUCCESS)
     return (ret_value);
   printf("login = %s\n", (char*)login);
-  if (access("~/.pass", F_OK) == -1)
+  if (asprintf(&path, "/home/%s/.pass", (char *)login) == -1)
+    return (PAM_SESSION_ERR);  
+  if (access(path, F_OK) == -1)
     {
-      if (create_passphrase() == -1)
+      if (create_passphrase((char *)login) == -1)
 	return (PAM_AUTHTOK_ERR);
-      if (decrypt_passphrase(old_password) == -1)
+      if (decrypt_passphrase(old_password, (char *)login) == -1)
 	return (PAM_AUTHTOK_ERR);
-      if (encrypt_passphrase(new_password) == -1)
+      if (encrypt_passphrase(new_password, (char *)login) == -1)
 	return (PAM_AUTHTOK_ERR);
     }
+  free(path);
   return (PAM_SUCCESS);
 }

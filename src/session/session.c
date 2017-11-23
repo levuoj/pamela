@@ -27,12 +27,12 @@ static int	passphrase_section(const char *password, const char *login)
     return (PAM_SESSION_ERR);  
   if (access(path, F_OK) == -1)
     {
-      if (create_passphrase() == -1)
+      if (create_passphrase(login) == -1)
 	return (PAM_SESSION_ERR);
-      if (encrypt_passphrase(password) == -1)
+      if (encrypt_passphrase(password, login) == -1)
 	return (PAM_SESSION_ERR);
     }
-  if (decrypt_passphrase(password) == -1)
+  if (decrypt_passphrase(password, login) == -1)
     return (PAM_SESSION_ERR);
   free(path);
   return (PAM_SUCCESS);
