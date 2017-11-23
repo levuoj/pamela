@@ -5,7 +5,7 @@
 ** Login   <anthony.jouvel@epitech.eu>
 **
 ** Started on  Tue Nov 21 18:42:37 2017 Jouvel Anthony
-** Last update Wed Nov 22 08:22:01 2017 pamela
+** Last update Thu Nov 23 10:50:29 2017 pamela
 */
 
 #define _GNU_SOURCE
@@ -43,7 +43,7 @@ int		encrypt_passphrase(const char *password)
 int		decrypt_passphrase(const char *password)
 {
   char		*command = NULL;
-  
+
   if (asprintf(&command,
 	       "echo %s |openssl aes-256-cbc -d -a -in ~/.pass.enc -out ~/.pass -pass stdin",
 	       password) == -1)
@@ -62,18 +62,18 @@ int		pam_sm_chauthtok(pam_handle_t *pamh,
   UNUSED(argv);
   const void	*old_password = NULL;
   const void	*new_password = NULL;
+  const void	*login = NULL;
   int		ret_value;
 
   if ((ret_value = pam_get_item(pamh, PAM_AUTHTOK, &new_password)) != PAM_SUCCESS ||
       new_password == NULL)
-    {
-      return (ret_value);
-    }
+    return (ret_value);
   if ((ret_value = pam_get_item(pamh, PAM_OLDAUTHTOK, &old_password)) != PAM_SUCCESS ||
       old_password == NULL)
-    {
-      return (ret_value);
-    }
+    return (ret_value);
+  if ((ret_value = pam_get_item(pamh, PAM_USER, &login)) != PAM_SUCCESS)
+    return (ret_value);
+  printf("login = %s\n", (char*)login);
   if (access("~/.pass", F_OK) == -1)
     {
       if (create_passphrase() == -1)
