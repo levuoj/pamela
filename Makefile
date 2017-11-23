@@ -5,7 +5,7 @@
 ## Login   <anthony.jouvel@epitech.eu>
 ##
 ## Started on  Tue Nov 21 18:14:11 2017 Jouvel Anthony
-## Last update Tue Nov 21 22:04:38 2017 Jouvel Anthony
+## Last update Thu Nov 23 14:32:39 2017 Jouvel Anthony
 ##
 
 GCC		=	gcc
@@ -53,14 +53,21 @@ fclean		:	clean
 
 re		:	fclean all
 
-install		:
+install		:	fclean all
 			@echo "${MODULE}: installation in progress ..."
-			@sleep 1
+			sudo cp ${MODULE} /lib/i386-linux-gnu/security
+			echo "   " >> /etc/pam.d/ auth
+			echo "   " >> /etc/pam.d/ session
+			echo "   " >> /etc/pam.d/ passwd
+			make check
 			@echo "OK"
 
 uninstall	:
 			@echo "uninstall ${MODULE}"
-			@sleep 1
+			sudo rm /lib/i386-linux-gnu/security/${MODULE}
+			sed -i '$ d' /etc/pam.d/ auth
+			sed -i '$ d' /etc/pam.d/ session
+			sed -i '$ d' /etc/pam.d/ passwd
 			@echo "OK"
 
 check		:
