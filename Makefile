@@ -56,18 +56,11 @@ re		:	fclean all
 install		:	fclean all
 			@echo "${MODULE}: installation in progress ..."
 			sudo cp ${MODULE} /lib/i386-linux-gnu/security
-			echo "auth optional ${MODULE}" >> /etc/pam.d/common-auth
-			echo "session optional ${MODULE}" >> /etc/pam.d/common-session
-			echo "password optional ${MODULE}   " >> /etc/pam.d/common-password
-			make check
 			@echo "OK"
 
 uninstall	:
 			@echo "uninstall ${MODULE}"
 			sudo rm /lib/i386-linux-gnu/security/${MODULE}
-			sed -i '$ d' /etc/pam.d/common-auth
-			sed -i '$ d' /etc/pam.d/common-session
-			sed -i '$ d' /etc/pam.d/common-password
 			@echo "OK"
 
 check		:
