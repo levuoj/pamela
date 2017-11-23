@@ -30,7 +30,7 @@ int		pam_sm_authenticate(pam_handle_t *pamh,
   UNUSED(flags);
   UNUSED(argc);
   UNUSED(argv);
-  const char	*password = NULL;
+  const void	*password = NULL;
   int		ret_value;
 
   if ((ret_value = pam_get_item(pamh, PAM_AUTHTOK, &password)) != PAM_SUCCESS)
