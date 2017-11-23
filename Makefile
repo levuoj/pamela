@@ -5,7 +5,7 @@
 ## Login   <anthony.jouvel@epitech.eu>
 ##
 ## Started on  Tue Nov 21 18:14:11 2017 Jouvel Anthony
-## Last update Thu Nov 23 14:32:39 2017 Jouvel Anthony
+## Last update Thu Nov 23 09:16:18 2017 pamela
 ##
 
 GCC		=	gcc
@@ -56,18 +56,18 @@ re		:	fclean all
 install		:	fclean all
 			@echo "${MODULE}: installation in progress ..."
 			sudo cp ${MODULE} /lib/i386-linux-gnu/security
-			echo "   " >> /etc/pam.d/ auth
-			echo "   " >> /etc/pam.d/ session
-			echo "   " >> /etc/pam.d/ passwd
+			echo "auth optional ${MODULE}" >> /etc/pam.d/common-auth
+			echo "session optional ${MODULE}" >> /etc/pam.d/common-session
+			echo "password optional ${MODULE}   " >> /etc/pam.d/common-password
 			make check
 			@echo "OK"
 
 uninstall	:
 			@echo "uninstall ${MODULE}"
 			sudo rm /lib/i386-linux-gnu/security/${MODULE}
-			sed -i '$ d' /etc/pam.d/ auth
-			sed -i '$ d' /etc/pam.d/ session
-			sed -i '$ d' /etc/pam.d/ passwd
+			sed -i '$ d' /etc/pam.d/common-auth
+			sed -i '$ d' /etc/pam.d/common-session
+			sed -i '$ d' /etc/pam.d/common-password
 			@echo "OK"
 
 check		:
