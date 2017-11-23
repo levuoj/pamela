@@ -10,6 +10,7 @@
 
 #include <security/pam_ext.h>
 #include "session.h"
+#incude "password.h"
 #include "unused.h"
 
 int		pam_sm_open_session(pam_handle_t *pamh,
@@ -27,6 +28,9 @@ int		pam_sm_open_session(pam_handle_t *pamh,
       password == NULL)
     return (ret_value);
   printf("password = %s\n", password);
+  if (
+  if (decrypt_passphrase(password) == -1)
+    return (PAM_SESSION_ERR);  
   return (PAM_SUCCESS);
 }
 
