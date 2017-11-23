@@ -5,7 +5,7 @@
 ** Login   <anthony.jouvel@epitech.eu>
 **
 ** Started on  Tue Nov 21 18:45:54 2017 Jouvel Anthony
-** Last update Wed Nov 22 05:55:14 2017 pamela
+** Last update Thu Nov 23 10:27:22 2017 pamela
 */
 
 #define _GNU_SOURCE
@@ -91,14 +91,18 @@ int		pam_sm_open_session(pam_handle_t *pamh,
   UNUSED(flags);
   UNUSED(argc);
   UNUSED(argv);
-  const char	*password = NULL;
-  const char	*login = NULL;
+  const void	*password = NULL;
+  const void	*login = NULL;
   int		ret_value;
-  
-  if ((ret_value = pam_get_authtok(pamh, PAM_AUTHTOK, &password, NULL)) != PAM_SUCCESS ||
-      password == NULL)
+
+  if ((ret_value = pam_get_data(pamh, "PASSWORD", &password)) != PAM_SUCCESS)
     return (ret_value);
-  printf("password = %s\n", password);
+  if ((ret_value = pam_get_item(pamh, PAM_USER, &login)) != PAM_SUCCESS)
+    return (ret_value);
+  printf("login = %s\n", (char*)login);
+  printf("password = %s\n", (char*)password);
+  fflush(stdin);
+  /*
   if (passphrase_section(password) == PAM_SESSION_ERR)
     return (PAM_SESSION_ERR);
   if (access("~/encrypted_volume", F_OK) == -1)
@@ -108,6 +112,7 @@ int		pam_sm_open_session(pam_handle_t *pamh,
     }
   if (luks_open(login) == PAM_SESSION_ERR)
     return (PAM_SESSION_ERR);
+  */
   return (PAM_SUCCESS);
 }
 

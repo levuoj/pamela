@@ -5,7 +5,7 @@
 ** Login   <anthony.jouvel@epitech.eu>
 **
 ** Started on  Tue Nov 21 11:01:46 2017 pamela
-** Last update Wed Nov 22 10:29:50 2017 pamela
+** Last update Thu Nov 23 10:29:18 2017 pamela
 */
 
 #include <security/pam_ext.h>
@@ -30,7 +30,7 @@ int		pam_sm_authenticate(pam_handle_t *pamh,
   UNUSED(flags);
   UNUSED(argc);
   UNUSED(argv);
-  const void	*password = NULL;
+  const char	*password = NULL;
   int		ret_value;
 
   if ((ret_value = pam_get_item(pamh, PAM_AUTHTOK, &password)) != PAM_SUCCESS)
