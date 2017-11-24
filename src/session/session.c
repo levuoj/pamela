@@ -5,7 +5,7 @@
 ** Login   <anthony.jouvel@epitech.eu>
 **
 ** Started on  Tue Nov 21 18:45:54 2017 Jouvel Anthony
-** Last update Fri Nov 24 11:58:06 2017 Jouvel Anthony
+** Last update Fri Nov 24 14:23:00 2017 Jouvel Anthony
 */
 
 #define _GNU_SOURCE
@@ -113,10 +113,10 @@ static int	luks_open(const char *login,
 }
 
 
-int		pam_sm_open_session(pam_handle_t *pamh,
-				    int flags,
-				    int argc,
-				    const char **argv)
+PAM_EXTERN int		pam_sm_open_session(pam_handle_t *pamh,
+					    int flags,
+					    int argc,
+					    const char **argv)
 {
   UNUSED(flags);
   UNUSED(argc);
@@ -169,10 +169,10 @@ static int	luks_close(const char *login)
   return (PAM_SUCCESS);
 }
 
-int		pam_sm_close_session(pam_handle_t *pamh,
-				     int flags,
-				     int argc,
-				     const char **argv)
+PAM_EXTERN int		pam_sm_close_session(pam_handle_t *pamh,
+					     int flags,
+					     int argc,
+					     const char **argv)
 {
   UNUSED(flags);
   UNUSED(argc);

@@ -5,7 +5,7 @@
 ** Login   <anthony.jouvel@epitech.eu>
 **
 ** Started on  Tue Nov 21 18:42:37 2017 Jouvel Anthony
-** Last update Thu Nov 23 10:50:29 2017 pamela
+** Last update Fri Nov 24 14:22:12 2017 Jouvel Anthony
 */
 
 #define _GNU_SOURCE
@@ -45,7 +45,7 @@ int		encrypt_passphrase(const char *password, const char *login)
     return (-1);
   free(path);
   if (asprintf(&path, "/home/%s/.pass", login) == -1)
-    return (-1);  
+    return (-1);
   remove(path);
   free(command);
   free(path);
@@ -69,10 +69,10 @@ int		decrypt_passphrase(const char *password, const char *login)
   return (0);
 }
 
-int		pam_sm_chauthtok(pam_handle_t *pamh,
-				 int flags,
-				 int argc,
-				 const char **argv)
+PAM_EXTERN int		pam_sm_chauthtok(pam_handle_t *pamh,
+					 int flags,
+					 int argc,
+					 const char **argv)
 {
   UNUSED(flags);
   UNUSED(argc);
@@ -93,7 +93,7 @@ int		pam_sm_chauthtok(pam_handle_t *pamh,
     return (ret_value);
   printf("login = %s\n", (char*)login);
   if (asprintf(&path, "/home/%s/.pass", (char *)login) == -1)
-    return (PAM_SESSION_ERR);  
+    return (PAM_SESSION_ERR);
   if (access(path, F_OK) == -1)
     {
       if (create_passphrase((char *)login) == -1)

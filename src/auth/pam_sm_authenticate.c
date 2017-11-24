@@ -5,7 +5,7 @@
 ** Login   <anthony.jouvel@epitech.eu>
 **
 ** Started on  Tue Nov 21 11:01:46 2017 pamela
-** Last update Thu Nov 23 10:29:18 2017 pamela
+** Last update Fri Nov 24 14:21:08 2017 Jouvel Anthony
 */
 
 #include <security/pam_ext.h>
@@ -22,10 +22,10 @@ static void	_cleanup(pam_handle_t *pamh,
   free(data);
 }
 
-int		pam_sm_authenticate(pam_handle_t *pamh,
-				    int flags,
-				    int argc,
-				    const char **argv)
+PAM_EXTERN int		pam_sm_authenticate(pam_handle_t *pamh,
+					    int flags,
+					    int argc,
+					    const char **argv)
 {
   UNUSED(flags);
   UNUSED(argc);
