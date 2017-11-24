@@ -54,16 +54,24 @@ fclean		:	clean
 
 re		:	fclean all
 
-install		:	fclean uninstall all
+install		:	fclean all
 			@echo "${MODULE}: installation in progress ..."
+			sudo rm -f /lib/i386-linux-gnu/security/${MODULE}
 			sudo cp ${MODULE} /lib/i386-linux-gnu/security/
-#			sudo echo " " > conf pam
+			sudo echo "auth optional pam_test.so" >> /etc/pam.d/common-auth
+			sudo echo "session optional pam_test.so" >> /etc/pam.d/common-session
+			sudo echo "password optional pam_test.so" >> /etc/pam.d/common-password
 			@echo "OK"
 
 uninstall	:
 			@echo "uninstall ${MODULE}"
 			sudo rm /lib/i386-linux-gnu/security/${MODULE}
-#			sudo head -n -1 /etc/pam.d/conf > ./conf.temp ; sudo mv ./conf.temp etc/pam.d/conf
+			sudo head -n -1 /etc/pam.d/common-auth > ./auth.temp
+			sudo mv ./auth.temp /etc/pam.d/common-auth
+			sudo head -n -1 /etc/pam.d/common-session > ./session.temp
+			sudo mv ./session.temp /etc/pam.d/common-session
+			sudo head -n -1 /etc/pam.d/common-password > ./password.temp
+			sudo mv ./password.temp /etc/pam.d/common-password
 			@echo "OK"
 
 check		:
