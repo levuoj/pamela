@@ -57,11 +57,13 @@ re		:	fclean all
 install		:	fclean uninstall all
 			@echo "${MODULE}: installation in progress ..."
 			sudo cp ${MODULE} /lib/i386-linux-gnu/security/
+#			sudo echo " " > conf pam
 			@echo "OK"
 
 uninstall	:
 			@echo "uninstall ${MODULE}"
 			sudo rm /lib/i386-linux-gnu/security/${MODULE}
+#			sudo head -n -1 /etc/pam.d/conf > ./conf.temp ; sudo mv ./conf.temp etc/pam.d/conf
 			@echo "OK"
 
 check		:
