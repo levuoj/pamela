@@ -14,6 +14,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <pwd.h>
 #include "session.h"
 #include "password.h"
 #include "unused.h"
@@ -93,9 +94,16 @@ static int	luks_open(const char *login,
   if (asprintf(&mount_path, "/home/%s/secure_data-rw", login) == -1)
     return (PAM_SESSION_ERR);
   if (stat(mount_path, &sb) == -1)
-    mkdir(mount_path, 0700);
+    {
+      mkdir(mount_path, 0700);
+
+      struct passwd	*pass = NULL;
+
+      pass = getpwnam(login);
+      chown(mount_path, pass->pw_uid, pass->pw_gid);
+    }
   if (asprintf(&command,
-	       "sudo mkfs.ext4 /dev/mapper/%s", login_volume) == -1)
+	       "sudo mkfs.ext4 -F /dev/mapper/%s", login_volume) == -1)
     return (PAM_SESSION_ERR);
   if (execute_command(command) == -1)
     return (PAM_SESSION_ERR);
@@ -158,12 +166,16 @@ static int	luks_close(const char *login)
     return (PAM_SESSION_ERR);
   if (execute_command(command) == -1)
     return (PAM_SESSION_ERR);
+  printf("j'ai demonter le conteneur\n");
+  fflush(stdin);
   free(command);
   remove(path);
-  if (asprintf(&command, "sudo luksClose %s_volume", login) == -1)
+  if (asprintf(&command, "sudo cryptsetup luksClose %s_volume", login) == -1)
     return (PAM_SESSION_ERR);
   if (execute_command(command) == -1)
     return (PAM_SESSION_ERR);
+  printf("j'ai close le volume\n");
+  fflush(stdin);
   free(command);
   free(path);
   return (PAM_SUCCESS);
