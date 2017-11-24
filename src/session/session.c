@@ -42,59 +42,73 @@ static int	passphrase_section(const char *password, const char *login)
   return (PAM_SUCCESS);
 }
 
-static int	luks_creation(const char *password, const char *login)
+static int	luks_creation(const char *password,
+			      const char *login,
+			      const char *path)
 {
   char		*command = NULL;
 
   (void)password;
   (void)login;
-  if (asprintf(&command, "fallocate -l 2G /home/%s/encrypted_volume",
-	       login) == -1)
+  if (asprintf(&command, "fallocate -l 2G %s",
+	       path) == -1)
     return (PAM_SESSION_ERR);
   if (execute_command(command) == -1)
     return (PAM_SESSION_ERR);
+  printf("j'ai créé le conteneur\n");
+  fflush(stdin);
   free(command);
   if (asprintf(&command,
-	       "cat /home/%s/.pass |cryptsetup luksFormat /home/%s/encrypted_volume",
-	       login, login) == -1)
+	       "cat /home/%s/.pass |sudo cryptsetup luksFormat -c aes -h sha256 %s",
+	       login, path) == -1)
     return (PAM_SESSION_ERR);
   if (execute_command(command) == -1)
     return (PAM_SESSION_ERR);
+  printf("j'ai chiffrer le conteneur\n");
+  fflush(stdin);
   free(command);
   return (PAM_SUCCESS);
 }
 
-static int	luks_open(const char *login)
+static int	luks_open(const char *login,
+			  const char *path)
 {
   char		*command = NULL;
+  char		*login_volume = NULL;
   struct stat	sb;
 
+  if (asprintf(&login_volume, "%s_volume", login) == -1)
+    return (PAM_SESSION_ERR);
   if (asprintf(&command,
-	       "cat /home/%s/.pass |cryptsetup luksOpen /home/%s/encrypted_volume %s_volume",
-	       login, login, login) == -1)
+	       "cat /home/%s/.pass |sudo cryptsetup luksOpen %s %s",
+	       login, path, login_volume) == -1)
     return (PAM_SESSION_ERR);
   if (execute_command(command) == -1)
     return (PAM_SESSION_ERR);
+  printf("j'ai ouvert le conteneur\n");
+  fflush(stdin);
   free(command);
 
-  char		*path = NULL;
-  if (asprintf(&path, "/home/%s/secure_data-rw", login) == -1)
+  char		*mount_path = NULL;
+  if (asprintf(&mount_path, "/home/%s/secure_data-rw", login) == -1)
     return (PAM_SESSION_ERR);
-  if (stat(path, &sb) == -1)
-    mkdir(path, 0700);
+  if (stat(mount_path, &sb) == -1)
+    mkdir(mount_path, 0700);
   if (asprintf(&command,
-	       "mkfs.ext4 /dev/mapper/login_volume") == -1)
+	       "sudo mkfs.ext4 /dev/mapper/%s", login_volume) == -1)
     return (PAM_SESSION_ERR);
   if (execute_command(command) == -1)
     return (PAM_SESSION_ERR);
   free(command);
   if (asprintf(&command,
-	       "mount -t ext4 /dev/mapper/login_volume %s", path) == -1)
+	       "sudo mount -t ext4 /dev/mapper/%s %s", login_volume, mount_path) == -1)
     return (PAM_SESSION_ERR);
   if (execute_command(command) == -1)
     return (PAM_SESSION_ERR);
+  printf("j'ai mount le conteneur\n");
+  fflush(stdin);
   free(command);
-  free(path);
+  free(mount_path);
   return (PAM_SUCCESS);
 }
 
@@ -109,6 +123,7 @@ int		pam_sm_open_session(pam_handle_t *pamh,
   UNUSED(argv);
   const void	*password = NULL;
   const void	*login = NULL;
+  char		*path = NULL;
   int		ret_value;
 
   if ((ret_value = pam_get_data(pamh, "PASSWORD", &password)) != PAM_SUCCESS)
@@ -120,13 +135,15 @@ int		pam_sm_open_session(pam_handle_t *pamh,
   fflush(stdin);
   if (passphrase_section(password, login) == PAM_SESSION_ERR)
     return (PAM_SESSION_ERR);
-  /*  if (access("~/encrypted_volume", F_OK) == -1)
+  if (asprintf(&path, "/home/%s/encrypted_volume", (char*)login) == -1)
+    return (PAM_SESSION_ERR);
+  if (access(path, F_OK) == -1)
     {
-      if (luks_creation(password, login) == PAM_SESSION_ERR)
+      if (luks_creation(password, login, path) == PAM_SESSION_ERR)
 	return (PAM_SESSION_ERR);
     }
-  if (luks_open(login) == PAM_SESSION_ERR)
-  return (PAM_SESSION_ERR); */
+  if (luks_open(login, path) == PAM_SESSION_ERR)
+    return (PAM_SESSION_ERR);
   return (PAM_SUCCESS);
 }
 
