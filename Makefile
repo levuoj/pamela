@@ -1,3 +1,4 @@
+
 ##
 ## Makefile for  in /home/levuoj/rendu/pamela
 ##
@@ -53,9 +54,9 @@ fclean		:	clean
 
 re		:	fclean all
 
-install		:	fclean all
+install		:	fclean uninstall all
 			@echo "${MODULE}: installation in progress ..."
-			sudo cp ${MODULE} /lib/i386-linux-gnu/security
+			sudo cp ${MODULE} /lib/i386-linux-gnu/security/
 			@echo "OK"
 
 uninstall	:
@@ -68,4 +69,4 @@ check		:
 			@sleep 1
 			@echo "OK"
 
-.PHONY		:	all clean fclean re install uninstall check test
+.PHONY		:	all clean fclean re install uninstall check
