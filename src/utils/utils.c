@@ -8,6 +8,7 @@
 ** Last update Wed Nov 22 09:54:28 2017 pamela
 */
 
+#include <stdio.h>
 #include "utils.h"
 
 int			execute_command(const char *command)
@@ -15,6 +16,8 @@ int			execute_command(const char *command)
   pid_t			pid;
   int			status;
 
+  printf("%s\n", command);
+  fflush(stdin);
   pid = fork();
   if (pid == -1)
     return (-1);

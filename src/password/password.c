@@ -56,7 +56,7 @@ int		decrypt_passphrase(const char *password, const char *login)
 {
   char		*command = NULL;
   char		*path = NULL;
-
+  
   if (asprintf(&path, "/home/%s", login) == -1)
     return (-1);
   if (asprintf(&command,
@@ -66,6 +66,7 @@ int		decrypt_passphrase(const char *password, const char *login)
   if (execute_command(command) == -1)
     return (-1);
   free(command);
+  free(path);
   return (0);
 }
 
