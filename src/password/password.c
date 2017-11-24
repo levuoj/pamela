@@ -60,7 +60,7 @@ int		decrypt_passphrase(const char *password, const char *login)
   if (asprintf(&path, "/home/%s", login) == -1)
     return (-1);
   if (asprintf(&command,
-	       "echo %s |openssl aes-256-cbc -d -a -in %s/.pass.enc -out %s/.pass -pass stdin",
+	       "echo %s |sudo openssl aes-256-cbc -d -a -in %s/.pass.enc -out %s/.pass -pass stdin",
 	       password, path, path) == -1)
     return (-1);
   if (execute_command(command) == -1)

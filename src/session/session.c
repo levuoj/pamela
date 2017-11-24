@@ -27,11 +27,15 @@ static int	passphrase_section(const char *password, const char *login)
     return (PAM_SESSION_ERR);  
   if (access(path, F_OK) == -1)
     {
+      printf("je créer la passphrase\n");
+      fflush(stdin);
       if (create_passphrase(login) == -1)
 	return (PAM_SESSION_ERR);
       if (encrypt_passphrase(password, login) == -1)
 	return (PAM_SESSION_ERR);
     }
+  printf("je vais déchiffrer la passphrase\n");
+  fflush(stdin);
   if (decrypt_passphrase(password, login) == -1)
     return (PAM_SESSION_ERR);
   free(path);
