@@ -5,7 +5,7 @@
 ** Login   <anthony.jouvel@epitech.eu>
 **
 ** Started on  Tue Nov 21 18:45:54 2017 Jouvel Anthony
-** Last update Thu Nov 23 10:27:22 2017 pamela
+** Last update Fri Nov 24 11:58:06 2017 Jouvel Anthony
 */
 
 #define _GNU_SOURCE
@@ -24,7 +24,7 @@ static int	passphrase_section(const char *password, const char *login)
   char		*path = NULL;
 
   if (asprintf(&path, "/home/%s/.pass.enc", login) == -1)
-    return (PAM_SESSION_ERR);  
+    return (PAM_SESSION_ERR);
   if (access(path, F_OK) == -1)
     {
       printf("je créer la passphrase\n");
@@ -147,14 +147,48 @@ int		pam_sm_open_session(pam_handle_t *pamh,
   return (PAM_SUCCESS);
 }
 
+static int	luks_close(const char *login)
+{
+  char		*path = NULL;
+  char		*command = NULL;
+
+  if (asprintf(&path, "/home/%s/secure_data-rw/", login) == -1)
+    return (PAM_SESSION_ERR);
+  if (asprintf(&command, "sudo umount %s", path) == -1)
+    return (PAM_SESSION_ERR);
+  if (execute_command(command) == -1)
+    return (PAM_SESSION_ERR);
+  free(command);
+  remove(path);
+  if (asprintf(&command, "sudo luksClose %s_volume", login) == -1)
+    return (PAM_SESSION_ERR);
+  if (execute_command(command) == -1)
+    return (PAM_SESSION_ERR);
+  free(command);
+  free(path);
+  return (PAM_SUCCESS);
+}
+
 int		pam_sm_close_session(pam_handle_t *pamh,
 				     int flags,
 				     int argc,
 				     const char **argv)
 {
-  UNUSED(pamh);
   UNUSED(flags);
   UNUSED(argc);
   UNUSED(argv);
+  const void	*password = NULL;
+  const void	*login = NULL;
+  int		ret_value;
+
+  if ((ret_value = pam_get_data(pamh, "PASSWORD", &password)) != PAM_SUCCESS)
+    return (ret_value);
+  if ((ret_value = pam_get_item(pamh, PAM_USER, &login)) != PAM_SUCCESS)
+    return (ret_value);
+  printf("login = %s\n", (char*)login);
+  printf("password = %s\n", (char*)password);
+  fflush(stdin);
+  if (luks_close(login) == PAM_SESSION_ERR)
+    return (PAM_SESSION_ERR);
   return (PAM_IGNORE);
 }
