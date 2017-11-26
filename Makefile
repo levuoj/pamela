@@ -5,7 +5,7 @@
 ## Login   <anthony.jouvel@epitech.eu>
 ##
 ## Started on  Tue Nov 21 18:14:11 2017 Jouvel Anthony
-## Last update Sun Nov 26 17:29:34 2017 Jouvel Anthony
+## Last update Sun Nov 26 11:42:57 2017 pamela
 ##
 
 GCC		=	gcc
@@ -53,7 +53,7 @@ fclean		:	clean
 
 re		:	fclean all
 
-install		:	fclean all check
+install		:	fclean all
 			@echo "${MODULE}: installation in progress ..."
 			@./script/install.rb
 

