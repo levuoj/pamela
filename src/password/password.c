@@ -10,6 +10,8 @@
 
 #define _GNU_SOURCE
 #include <stdio.h>
+#include <sys/types.h>
+#include <pwd.h>
 #include "password.h"
 #include "utils.h"
 #include "unused.h"
@@ -19,13 +21,20 @@ int		create_passphrase(const char *login)
 {
   char		*command = NULL;
   char		*path = NULL;
-
+  struct passwd	*pass = NULL;
+  
   if (asprintf(&path, "/home/%s/.pass", login) == -1)
     return (-1);
   if (asprintf(&command, "head -c 4000 < /dev/urandom > %s", path) == -1)
     return (-1);
   if (execute_command(command) == -1)
     return (-1);
+  free(command);
+  pass = getpwnam(login);
+  if (asprintf(&command, "chown %s:%d %s", login, pass->pw_gid, path) == -1)
+    return (PAM_SESSION_ERR);
+  if (execute_command(command) == -1)
+    return (PAM_SESSION_ERR);
   free(command);
   return (0);
 }
@@ -34,7 +43,8 @@ int		encrypt_passphrase(const char *password, const char *login)
 {
   char		*command = NULL;
   char		*path = NULL;
-
+  struct passwd *pass = NULL;
+  
   if (asprintf(&path, "/home/%s", login) == -1)
     return (-1);
   if (asprintf(&command,
@@ -43,11 +53,16 @@ int		encrypt_passphrase(const char *password, const char *login)
     return (-1);
   if (execute_command(command) == -1)
     return (-1);
-  free(path);
+  free(command);
+  pass = getpwnam(login);
+  if (asprintf(&command, "chown %s:%d %s/.pass.enc", login, pass->pw_gid, path) == -1)
+    return (PAM_SESSION_ERR);
+  if (execute_command(command) == -1)
+    return (PAM_SESSION_ERR);
+  free(command);  
   if (asprintf(&path, "/home/%s/.pass", login) == -1)
     return (-1);
   remove(path);
-  free(command);
   free(path);
   return (0);
 }
@@ -56,15 +71,22 @@ int		decrypt_passphrase(const char *password, const char *login)
 {
   char		*command = NULL;
   char		*path = NULL;
-
+  struct passwd	*pass = NULL;
+  
   if (asprintf(&path, "/home/%s", login) == -1)
     return (-1);
   if (asprintf(&command,
-	       "echo %s |sudo openssl aes-256-cbc -d -a -in %s/.pass.enc -out %s/.pass -pass stdin",
+	       "echo %s |openssl aes-256-cbc -d -a -in %s/.pass.enc -out %s/.pass -pass stdin",
 	       password, path, path) == -1)
     return (-1);
   if (execute_command(command) == -1)
     return (-1);
+  free(command);
+  pass = getpwnam(login);
+  if (asprintf(&command, "chown %s:%d %s/.pass", login, pass->pw_gid, path) == -1)
+    return (PAM_SESSION_ERR);
+  if (execute_command(command) == -1)
+    return (PAM_SESSION_ERR);
   free(command);
   free(path);
   return (0);

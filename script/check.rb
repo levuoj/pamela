@@ -11,7 +11,7 @@ array = ["/etc/pam.d/common-auth", "/etc/pam.d/common-session", "/etc/pam.d/comm
 bool = true
 
 array.each { | file |
-  if File.open(file).each_line.any? { |line| line.include?('pam_test.so') }
+  if File.open(file).each_line.any? { |line| line.include?('pam_pamela.so') }
     puts "file #{file} : OK"
   else
     puts "Error in file #{file}"

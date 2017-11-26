@@ -44,15 +44,22 @@ static int	luks_creation(const char *login,
 			      const char *path)
 {
   char		*command = NULL;
-
+  struct passwd	*pass = NULL;
+  
   if (asprintf(&command, "fallocate -l 2G %s",
 	       path) == -1)
     return (PAM_SESSION_ERR);
   if (execute_command(command) == -1)
     return (PAM_SESSION_ERR);
   free(command);
+  pass = getpwnam(login);
+  if (asprintf(&command, "chown %s:%d %s", login, pass->pw_gid, path) == -1)
+    return (PAM_SESSION_ERR);
+  if (execute_command(command) == -1)
+    return (PAM_SESSION_ERR);
+  free(command);
   if (asprintf(&command,
-	       "cat /home/%s/.pass |sudo cryptsetup luksFormat -c aes -h sha256 %s",
+	       "cat /home/%s/.pass |cryptsetup luksFormat -c aes -h sha256 %s",
 	       login, path) == -1)
     return (PAM_SESSION_ERR);
   if (execute_command(command) == -1)
@@ -76,7 +83,7 @@ static int	luks_open(const char *login,
   if (asprintf(&second_path, "/home/%s/.pass", login) == -1)
     return (PAM_SESSION_ERR);
   if (asprintf(&command,
-	       "cat %s |sudo cryptsetup luksOpen %s %s",
+	       "cat %s |cryptsetup luksOpen %s %s",
 	       second_path, path, login_volume) == -1)
     return (PAM_SESSION_ERR);
   if (execute_command(command) == -1)
@@ -91,20 +98,20 @@ static int	luks_open(const char *login,
   if (first == true)
     {
       if (asprintf(&command,
-		   "sudo mkfs.ext4 -F /dev/mapper/%s", login_volume) == -1)
+		   "mkfs.ext4 -F /dev/mapper/%s", login_volume) == -1)
 	return (PAM_SESSION_ERR);
       if (execute_command(command) == -1)
 	return (PAM_SESSION_ERR);
       free(command);
     }
   if (asprintf(&command,
-	       "sudo mount -t ext4 /dev/mapper/%s %s", login_volume, second_path) == -1)
+	       "mount -t ext4 /dev/mapper/%s %s", login_volume, second_path) == -1)
     return (PAM_SESSION_ERR);
   if (execute_command(command) == -1)
     return (PAM_SESSION_ERR);
   free(command);
   pass = getpwnam(login);
-  if (asprintf(&command, "sudo chown %s:%d %s", login, pass->pw_gid, second_path) == -1)
+  if (asprintf(&command, "chown %s:%d %s", login, pass->pw_gid, second_path) == -1)
     return (PAM_SESSION_ERR);
   if (execute_command(command) == -1)
     return (PAM_SESSION_ERR);
@@ -157,13 +164,13 @@ static int	luks_close(const char *login)
 
   if (asprintf(&path, "/home/%s/secure_data-rw/", login) == -1)
     return (PAM_SESSION_ERR);
-  if (asprintf(&command, "sudo umount %s", path) == -1)
+  if (asprintf(&command, "umount %s", path) == -1)
     return (PAM_SESSION_ERR);
   if (execute_command(command) == -1)
     return (PAM_SESSION_ERR);
   free(command);
   remove(path);
-  if (asprintf(&command, "sudo cryptsetup luksClose %s_volume", login) == -1)
+  if (asprintf(&command, "cryptsetup luksClose %s_volume", login) == -1)
     return (PAM_SESSION_ERR);
   if (execute_command(command) == -1)
     return (PAM_SESSION_ERR);
