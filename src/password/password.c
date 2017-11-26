@@ -5,7 +5,7 @@
 ** Login   <anthony.jouvel@epitech.eu>
 **
 ** Started on  Tue Nov 21 18:42:37 2017 Jouvel Anthony
-** Last update Fri Nov 24 14:22:12 2017 Jouvel Anthony
+** Last update Sun Nov 26 17:30:29 2017 Jouvel Anthony
 */
 
 #define _GNU_SOURCE
@@ -56,7 +56,7 @@ int		decrypt_passphrase(const char *password, const char *login)
 {
   char		*command = NULL;
   char		*path = NULL;
-  
+
   if (asprintf(&path, "/home/%s", login) == -1)
     return (-1);
   if (asprintf(&command,
