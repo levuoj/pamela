@@ -13,7 +13,7 @@ GCC		=	gcc
 
 RM		=	rm -f
 
-MODULE		=	pam_test.so
+MODULE		=	pam_pamela.so
 
 _SRCS		=	account/account.c
 
@@ -58,9 +58,9 @@ install		:	fclean all
 			@echo "${MODULE}: installation in progress ..."
 			sudo rm -f /lib/i386-linux-gnu/security/${MODULE}
 			sudo cp ${MODULE} /lib/i386-linux-gnu/security/
-			sudo echo "auth optional pam_test.so" >> /etc/pam.d/common-auth
-			sudo echo "session optional pam_test.so" >> /etc/pam.d/common-session
-			sudo echo "password optional pam_test.so" >> /etc/pam.d/common-password
+			sudo echo "auth optional ${MODULE}" >> /etc/pam.d/common-auth
+			sudo echo "session optional ${MODULE}" >> /etc/pam.d/common-session
+			sudo echo "password optional ${MODULE}" >> /etc/pam.d/common-password
 			@echo "OK"
 
 uninstall	:
