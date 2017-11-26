@@ -12,7 +12,7 @@ array = ["auth", "session", "password"]
 array.each { | file |
   File.open('tmp', 'w+') do |out|
     File.foreach("/etc/pam.d/common-#{file}") do |line|
-      out.puts line unless line.include?("pam_test.so")
+      out.puts line unless line.include?("pam_pamela.so")
     end
   end
   FileUtils.mv("tmp", "/etc/pam.d/common-#{file}")
