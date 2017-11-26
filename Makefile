@@ -1,4 +1,3 @@
-
 ##
 ## Makefile for  in /home/levuoj/rendu/pamela
 ##
@@ -6,7 +5,7 @@
 ## Login   <anthony.jouvel@epitech.eu>
 ##
 ## Started on  Tue Nov 21 18:14:11 2017 Jouvel Anthony
-## Last update Thu Nov 23 09:16:18 2017 pamela
+## Last update Sun Nov 26 11:42:57 2017 pamela
 ##
 
 GCC		=	gcc
@@ -56,27 +55,15 @@ re		:	fclean all
 
 install		:	fclean all
 			@echo "${MODULE}: installation in progress ..."
-			sudo rm -f /lib/i386-linux-gnu/security/${MODULE}
-			sudo cp ${MODULE} /lib/i386-linux-gnu/security/
-			sudo echo "auth optional ${MODULE}" >> /etc/pam.d/common-auth
-			sudo echo "session optional ${MODULE}" >> /etc/pam.d/common-session
-			sudo echo "password optional ${MODULE}" >> /etc/pam.d/common-password
-			@echo "OK"
+			@./script/install.rb
 
 uninstall	:
-			@echo "uninstall ${MODULE}"
-			sudo rm /lib/i386-linux-gnu/security/${MODULE}
-			sudo head -n -1 /etc/pam.d/common-auth > ./auth.temp
-			sudo mv ./auth.temp /etc/pam.d/common-auth
-			sudo head -n -1 /etc/pam.d/common-session > ./session.temp
-			sudo mv ./session.temp /etc/pam.d/common-session
-			sudo head -n -1 /etc/pam.d/common-password > ./password.temp
-			sudo mv ./password.temp /etc/pam.d/common-password
-			@echo "OK"
+			@echo "${MODULE}: uninstall in progress ..."
+			@./script/uninstall.rb
 
 check		:
-			@echo "${MODULE}: checking ..."
-			@sleep 1
-			@echo "OK"
+			@echo "${MODULE}: checking in progress ..."
+			@./script/check.rb
+
 
 .PHONY		:	all clean fclean re install uninstall check
