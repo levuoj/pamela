@@ -65,5 +65,7 @@ check		:
 			@echo "${MODULE}: checking in progress ..."
 			@./script/check.rb
 
+test		:
+			@echo "Salut à tous les amis"
 
-.PHONY		:	all clean fclean re install uninstall check
+.PHONY		:	all clean fclean re install uninstall check test
